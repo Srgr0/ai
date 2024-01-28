@@ -213,10 +213,16 @@ class Session {
 		const boardState = this.boardStateToString();
 		const turnValue = this.game.turn === Reversi.BLACK ? 0 : 1;
 		const curlCommand = `curl -X PUT 'http://127.0.0.1:5000/put' -H 'Accept: */*' -H 'Connection: keep-alive' -F 'board=${boardState}' -F 'turn=${turnValue}'`;
+
+		console.log('Executing curl command:', curlCommand); // コンソールにcurlコマンドを出力
+
 		const nextMove = this.executeCurlCommand(curlCommand); // Function to execute curl command and get the response
+
+		console.log('Curl response:', nextMove); // コンソールにcurlレスポンスを出力
+
 		this.engine.putStone(nextMove);
 		this.currentTurn++;
-	}
+}
 
 	/**
 	 * Misskeyに投稿します
