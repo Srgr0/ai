@@ -210,7 +210,7 @@ class Session {
 
 	private async think() {
 		const boardState = this.boardStateToString();
-		const turnValue = this.game.turn === Reversi.BLACK ? 0 : 1;
+		const turnValue = 1;
 		const requestBody = new URLSearchParams({
 				'board': boardState,
 				'turn': turnValue.toString()
