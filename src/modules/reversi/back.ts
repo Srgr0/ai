@@ -11,8 +11,7 @@ import * as Reversi from './engine.js';
 import config from '@/config.js';
 import serifs from '@/serifs.js';
 import type { User } from '@/misskey/user.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import fetch from 'node-fetch';
 
 function getUserName(user) {
 	return user.name || user.username;
@@ -209,21 +208,33 @@ class Session {
     }
 };
 
-	private think = () => {
-		// New logic to request external server for the next move
-		// Convert the current board state to a 64-digit number
+	private async think() {
 		const boardState = this.boardStateToString();
 		const turnValue = this.game.turn === Reversi.BLACK ? 0 : 1;
-		const curlCommand = `curl -X PUT 'http://127.0.0.1:5000/put' -H 'Accept: */*' -H 'Connection: keep-alive' -F 'board=${boardState}' -F 'turn=${turnValue}'`;
+		try {
+				const response = await fetch('http://127.0.0.1:5000/put', {
+						method: 'PUT',
+						headers: {
+								'Accept': '*/*',
+								'Connection': 'keep-alive'
+						},
+						body: new URLSearchParams({
+								'board': boardState,
+								'turn': turnValue.toString()
+						})
+				});
 
-		console.log('Executing curl command:', curlCommand); // コンソールにcurlコマンドを出力
+				if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+				}
 
-		const nextMove = this.executeCurlCommand(curlCommand); // Function to execute curl command and get the response
-
-		console.log('Curl response:', nextMove); // コンソールにcurlレスポンスを出力
-
-		this.engine.putStone(nextMove);
-		this.currentTurn++;
+				const nextMove = await response.text();
+				console.log('Curl response:', nextMove);
+				this.engine.putStone(nextMove);
+				this.currentTurn++;
+		} catch (error) {
+				console.error('Error sending request:', error);
+		}
 }
 
 	/**
