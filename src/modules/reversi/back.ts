@@ -211,6 +211,14 @@ class Session {
 	private async think() {
 		const boardState = this.boardStateToString();
 		const turnValue = this.game.turn === Reversi.BLACK ? 0 : 1;
+		const requestBody = new URLSearchParams({
+				'board': boardState,
+				'turn': turnValue.toString()
+		});
+
+		// リクエストの内容を出力
+		console.log('Request body:', requestBody.toString());
+
 		try {
 				const response = await fetch('http://127.0.0.1:5000/put', {
 						method: 'PUT',
@@ -218,10 +226,7 @@ class Session {
 								'Accept': '*/*',
 								'Connection': 'keep-alive'
 						},
-						body: new URLSearchParams({
-								'board': boardState,
-								'turn': turnValue.toString()
-						})
+						body: requestBody
 				});
 
 				if (!response.ok) {
@@ -229,7 +234,10 @@ class Session {
 				}
 
 				const nextMove = await response.text();
-				console.log('Curl response:', nextMove);
+
+				// レスポンスの内容を出力
+				console.log('Response from server:', nextMove);
+
 				this.engine.putStone(nextMove);
 				this.currentTurn++;
 		} catch (error) {
