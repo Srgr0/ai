@@ -11,6 +11,8 @@ import * as Reversi from './engine.js';
 import config from '@/config.js';
 import serifs from '@/serifs.js';
 import type { User } from '@/misskey/user.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 function getUserName(user) {
 	return user.name || user.username;
