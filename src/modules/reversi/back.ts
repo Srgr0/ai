@@ -211,7 +211,7 @@ class Session {
 		// New logic to request external server for the next move
 		// Convert the current board state to a 64-digit number
 		const boardState = this.boardStateToString();
-		const turnValue = this.game.turn === BLACK ? 0 : 1;
+		const turnValue = this.game.turn === Reversi.BLACK ? 0 : 1;
 		const curlCommand = `curl -X PUT 'http://127.0.0.1:5000/put' -H 'Accept: */*' -H 'Connection: keep-alive' -F 'board=${boardState}' -F 'turn=${turnValue}'`;
 		const nextMove = this.executeCurlCommand(curlCommand); // Function to execute curl command and get the response
 		this.engine.putStone(nextMove);
