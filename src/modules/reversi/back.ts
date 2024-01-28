@@ -183,7 +183,7 @@ class Session {
 	private boardStateToString(): string {
 		return this.engine.board.map(cell => {
 				if (cell === null) return '0';
-				return cell === Reversi.BLACK ? '1' : '2';
+				return cell === this.botColor ? '2' : '1';
 		}).join('');
 	}
 
